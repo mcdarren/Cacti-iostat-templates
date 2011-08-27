@@ -1,5 +1,13 @@
 OVERVIEW
 --------
+
+********
+NB: This is a fork of the original collection which has been modified to serve
+my own personal needs. It has been tested to work on Linux CentOS 5.5 only,
+and only in my specific environment. No guarantees whatsoever are given that it
+will work in other environments.
+********
+
 This is a collection of scripts and Cacti templates to graph the output from
 the "iostat" command. At the moment, it supports Linux and Solaris iostat.
 
@@ -26,6 +34,23 @@ adjust the instructions below to reflect this.
 
 CHANGES
 -------
+27/08/2011 - Version 1.8
+    * Added getiostats.pl for generation of cache file
+      - resolves logical volume names
+      - includes locking code to avoid duplicate instances
+      - NB: only tested on Linux CentOS 5.5
+    * Several changes to iostat-persist.pl
+      - removed version history and GPL guff (this belongs elsewhere)
+      - added 'use warnings'
+      - refactored for consistent styling/indentation
+      - removed system call to 'uname' in preference to perl built-in $^O
+      - switched all open calls to 3 argument form
+      - removed horrid regular expression and replaced with a simple split (linux-os only)
+      - refactored repeated %stats assignments into a loop
+      - NB: only tested on Linux CentOS 5.5
+    * Template tweaks
+      - Use host description rather than host name
+      - Disabiguate title on read/write graphs
 10/03/2011 - Version 1.7 - Uploaded to github
 14/10/2010 - Version 1.6 - Added iostat-persist.pl by "asq"
 18/07/2009 - Version 1.5 - Added FreeBSD distribution from Boogie Shafer
@@ -59,12 +84,14 @@ INSTALLATION
 
 1.) CRON JOB
 
-On the server to be monitored, copy scripts/iostat.pl to /usr/local/bin.
-Then, define a cron job that creates the iostat.cache file. For example, on
-most Linux systems, you should be able to create a file called 
-/etc/cron.d/iostat with the following contents :
+On the server to be monitored, copy scripts/iostat.pl and scripts/getiostats.pl to /usr/local/bin.
+Then, define a cron job that calls getiostats.pl to create the iostat.cache file. 
 
-* * * * * root cd /tmp && iostat -xkd 30 2 | sed 's/,/\./g' > io.tmp && mv io.tmp iostat.cache
+For example (/etc/crontab)
+*/1 * * * * root /usr/local/bin/getiostats.pl
+
+The above will call the script every minute. You shouldn't need to worry about having multiple instances running,
+as the script includes some code to prevent that.
 
 And on Solaris, you'll need to edit a suitable crontab (root or sys would be the
 obvious choices) with the following :

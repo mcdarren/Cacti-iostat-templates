@@ -24,13 +24,13 @@ while (my $cmd = <STDIN>) {
 
     if ($cmd eq "PING") {
         print "PONG\n";
-    } 
+    }
     elsif ($cmd eq "get") {
         my $oid_in = <STDIN>;
         chomp $oid_in;
         process();
         getoid($oid_in);
-    } 
+    }
     elsif ($cmd eq "getnext") {
         my $oid_in = <STDIN>;
         chomp $oid_in;
@@ -38,7 +38,7 @@ while (my $cmd = <STDIN>) {
         my $found = 0;
         my $next = getnextoid($oid_in);
         getoid($next);
-    } 
+    }
     else {
         # Unknown command
     }
@@ -108,7 +108,7 @@ sub getoid {
             print "string\n";
         }
         print "$stats{$oid}\n";
-    } 
+    }
     else {
         print "NONE\n";
     }
